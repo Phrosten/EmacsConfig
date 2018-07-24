@@ -1,0 +1,277 @@
+* Emacs config file
+
+** Emacs
+
+*** Startup
+
+Inhibit the startup message and clear the scratch buffer.
+
+#+BEGIN_SRC emacs-lisp
+(setq inhibit-startup-message t)
+(setq initial-scratch-message nil)
+#+END_SRC
+
+*** Home directory
+
+Opening a file starts at the home directory.
+
+#+BEGIN_SRC emacs-lisp
+(setq default-directory "~/")
+#+END_SRC
+
+*** Garbage collection
+
+Increase the garbage collection maximum.
+
+#+BEGIN_SRC emacs-lisp
+(setq gc-cons-threshold 20000000)
+#+END_SRC
+
+*** Visual bell
+
+#+BEGIN_SRC emacs-lisp
+(setq visible-bell t)
+#+END_SRC
+
+Instead of an audio signal, flash the screen if an action is problematic.
+
+*** Add file sizes to buffers
+
+#+BEGIN_SRC emacs-lisp
+(setq-default dired-listing-switches "-alh")
+#+END_SRC
+
+
+** Packages
+
+#+BEGIN_SRC emacs-lisp
+(defvar package-list '())
+#+END_SRC
+
+*** Package Archives
+
+#+BEGIN_SRC emacs-lisp
+(require 'package)
+(setq package-archives '(("elpa" . "http://tromey.com/elpa/")
+                         ("gnu" . "http://elpa.gnu.org/packages/")
+                         ("marmalade" . "http://marmalade-repo.org/packages/")
+                         ("melpa" . "http://melpa.milkbox.net/packages/")))
+#+END_SRC
+
+*** Packages
+
+**** Org Mode
+
+#+BEGIN_SRC emacs-lisp
+(setq package-list (append package-list '(
+    ox-gfm
+)))
+#+END_SRC
+
+**** Python Development
+
+#+BEGIN_SRC emacs-lisp
+(setq package-list (append package-list '(
+    elpy
+    flycheck
+    py-autopep8
+)))
+#+END_SRC
+
+*** Install packages
+
+#+BEGIN_SRC emacs-lisp
+(package-initialize)
+(when (not package-archive-contents)
+  (package-refresh-contents))
+
+(mapc #'(lambda (package)
+    (unless (package-installed-p package)
+      (package-install package)))
+      package-list)
+#+END_SRC
+
+*** Package configuration
+
+**** Org Mode
+
+***** ox-gfm
+
+#+BEGIN_SRC emacs-lisp
+(eval-after-load "org"
+  '(require 'ox-gfm nil t))
+#+END_SRC
+
+
+**** Python Development
+
+***** Elpy
+
+Enable elpy
+
+#+BEGIN_SRC emacs-lisp
+(elpy-enable)
+(setq elpy-rpc-python-command "python3")
+
+(setq python-shell-interpreter "python3"
+      python-shell-interpreter-args "-i")
+#+END_SRC
+
+***** Flycheck
+
+Change elpy to use flycheck.
+
+#+BEGIN_SRC emacs-lisp
+(when (require 'flycheck nil t)
+  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+  (add-hook 'elpy-mode-hook 'flycheck-mode))
+#+END_SRC
+
+***** AutoPEP8
+
+Enable autopep8.
+
+#+BEGIN_SRC emacs-lisp
+(require 'py-autopep8)
+(add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
+#+END_SRC
+
+
+** Babel
+
+Load languages for org mode code block support.
+
+#+BEGIN_SRC emacs-lisp
+(setq org-babel-python-command "python3")
+(org-babel-do-load-languages
+      'org-babel-load-languages
+      '((python . t)))
+#+END_SRC
+
+
+** Visual
+
+*** Theme
+
+Load the monokai theme from an external file.
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+(load-theme 'monokai t)
+#+END_SRC
+
+*** GUI Mode Settings
+
+Disable the menu, tool and scroll bar.
+
+#+BEGIN_SRC emacs-lisp
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+#+END_SRC
+
+
+** Text
+
+*** Line configuration
+**** Line numbers
+
+#+BEGIN_SRC emacs-lisp
+(global-linum-mode 1)
+#+END_SRC
+
+**** Line wrap
+
+#+BEGIN_SRC emacs-lisp
+(setq-default word-wrap t)
+#+END_SRC
+
+**** Line length limit
+
+#+BEGIN_SRC emacs-lisp
+(require 'whitespace)
+(setq whitespace-style '(face empty tabs lines-tail trailing))
+(global-whitespace-mode t)
+
+#+END_SRC
+
+**** Trailing whitespace
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+#+END_SRC
+
+**** Final newline
+
+#+BEGIN_SRC emacs-lisp
+(setq require-final-newline t)
+#+END_SRC
+
+*** Tab Settings
+
+#+BEGIN_SRC emacs-lisp
+(setq standard-indent 4)
+(setq-default tab-width 4)
+(setq-default indent-tabs-mode nil)
+#+END_SRC
+
+*** Overwrite selected text
+
+If text is selected and a key is pressed, overwrite it.
+#+BEGIN_SRC emacs-lisp
+(delete-selection-mode t)
+#+END_SRC
+
+*** Syntax highlighting
+
+Turn on syntax hightlighting whenever possible.
+
+#+BEGIN_SRC emacs-lisp
+(global-font-lock-mode t)
+(setq org-src-fontify-natively t)    ; Enable in org mode
+#+END_SRC
+
+*** Show matching parenthesis
+
+#+BEGIN_SRC emacs-lisp
+(show-paren-mode t)
+(setq show-paren-delay 0.0)
+#+END_SRC
+
+*** Transient mark mode
+
+#+BEGIN_SRC emacs-lisp
+(transient-mark-mode t)
+#+END_SRC
+
+
+** File
+
+*** Recursively create parent directories
+
+When opening a file, offer to create the parent directories, if they do not exist.
+#+BEGIN_SRC emacs-lisp
+(add-hook 'before-save-hook
+    (lambda ()
+        (when buffer-file-name
+            (let ((dir (file-name-directory buffer-file-name)))
+                (when (and (not (file-exists-p dir))
+                    (y-or-n-p (format "Directory %s does not exist. Create it?" dir)))
+                    (make-directory dir t))))))
+#+END_SRC
+
+*** Follow Symlinks
+
+Follow symlinks whenever a file is opened.
+
+#+BEGIN_SRC emacs-lisp
+(setq vc-follow-symlinks t)
+#+END_SRC
+
+*** Refresh files
+
+Automatically refresh buffers if the file was changed.
+
+#+BEGIN_SRC emacs-lisp
+(global-auto-revert-mode t)
+#+END_SRC

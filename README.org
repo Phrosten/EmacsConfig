@@ -1,0 +1,8 @@
+* Phrosten's emacs configuration file
+
+This repository contains my personal emacs configuration.
+
+** Setup
+
+- Run setup.sh to install the necessary requirements
+- Run emacs and let it download all dependencies 
