@@ -68,6 +68,15 @@ Instead of an audio signal, flash the screen if an action is problematic.
 )))
 #+END_SRC
 
+**** General Development
+
+#+BEGIN_SRC emacs-lisp
+(setq package-list (append package-list '(
+    projectile    ; Project Navigation
+    magit         ; Git integration
+)))
+#+END_SRC
+
 **** Python Development
 
 #+BEGIN_SRC emacs-lisp
@@ -75,6 +84,15 @@ Instead of an audio signal, flash the screen if an action is problematic.
     elpy
     flycheck
     py-autopep8
+)))
+#+END_SRC
+
+**** Clojure Development
+
+#+BEGIN_SRC emacs-lisp
+(setq package-list (append package-list '(
+    clojure-mode
+    cider
 )))
 #+END_SRC
 
