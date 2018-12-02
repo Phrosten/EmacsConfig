@@ -96,6 +96,14 @@ Instead of an audio signal, flash the screen if an action is problematic.
 )))
 #+END_SRC
 
+**** Scheme Development
+
+#+BEGIN_SRC emacs-lisp
+(setq package-list (append package-list '(
+    geiser
+)))
+#+END_SRC
+
 *** Install packages
 
 #+BEGIN_SRC emacs-lisp
@@ -161,9 +169,11 @@ Load languages for org mode code block support.
 
 #+BEGIN_SRC emacs-lisp
 (setq org-babel-python-command "python3")
+(setq geiser-default-implementation 'guile)
 (org-babel-do-load-languages
       'org-babel-load-languages
-      '((python . t)))
+      '((python . t)
+        (scheme . t)))
 #+END_SRC
 
 
