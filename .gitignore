@@ -4,3 +4,4 @@ games/*
 
 config.el
 network-security.data
+session.*
