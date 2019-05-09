@@ -41,7 +41,6 @@ Instead of an audio signal, flash the screen if an action is problematic.
 (setq-default dired-listing-switches "-alh")
 #+END_SRC
 
-
 ** Packages
 
 #+BEGIN_SRC emacs-lisp
@@ -162,6 +161,18 @@ Enable autopep8.
 (add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
 #+END_SRC
 
+** Org Mode
+
+#+BEGIN_SRC emacs-lisp
+(require 'org)
+
+(setq org-agenda-files (list "~/pos/gtd/projects.org"))
+
+(setq org-startup-indented t)
+(setq org-hide-leading-stars t)
+
+(setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
+#+END_SRC
 
 ** Babel
 
@@ -175,7 +186,6 @@ Load languages for org mode code block support.
       '((python . t)
         (scheme . t)))
 #+END_SRC
-
 
 ** Visual
 
@@ -197,7 +207,6 @@ Disable the menu, tool and scroll bar.
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 #+END_SRC
-
 
 ** Text
 
@@ -271,7 +280,6 @@ Turn on syntax hightlighting whenever possible.
 #+BEGIN_SRC emacs-lisp
 (transient-mark-mode t)
 #+END_SRC
-
 
 ** File
 
